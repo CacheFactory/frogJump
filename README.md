@@ -1,5 +1,5 @@
 #Interview Question
-[http://process-smith.com/frog.html](Live demo)
+[Live Demo](http://process-smith.com/frog.html)
 ---
 >You are a frog and you are trying to get across a river, in front of you are a series of lilly pads and gaps.
 >If you land on a lilly pad, you are safe, if you land on a gap, it's sad.
@@ -15,5 +15,5 @@
 >Your goal is to get past the end of the array, so any space past the last one is safe.
 
 ##Solution
----
+
 I created a tree of all possible outcomes and then traverse the tree to find the shortest path.
