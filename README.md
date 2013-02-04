@@ -1,5 +1,5 @@
 #Interview Question
-(http://process-smith.com/frog.html)[Live demo]
+[http://process-smith.com/frog.html](Live demo)
 ---
 >You are a frog and you are trying to get across a river, in front of you are a series of lilly pads and gaps.
 >If you land on a lilly pad, you are safe, if you land on a gap, it's sad.
