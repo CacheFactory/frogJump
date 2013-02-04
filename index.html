@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+</head>
+<body>
+
+<div style="margin-top:30px; width:900px; margin-left:auto; margin-right:auto">
+	<h2>Lilly pad problem:</h2>
+<p>
+You are a frog and you are trying to get across a river, in front of you are a series of lilly pads and gaps.
+If you land on a lilly pad, you are safe, if you land on a gap, it's sad.</p>
+<p>
+You can jump to N, N+1, or N-1 spaces in front of you, where N is your current velocity. Your starting velocity is 0.<br>
+Velocity = the previous number of spaces you jumped.
+</p>
+<p>
+For example: here is a representation of what you see in front of you: [true, false, true, true, false, true, true, true]<br/>
+true indicates there is a pad, false indicates there is a gap. 
+</p>
+<p>
+Write a function that takes as input, an array like above and outputs the fastest safe route across the river, and returns false if it is impossible to get across.
+Example output: [1,2,3,3], [1,2,3,4] both get you across the fastest in the example input.
+Your goal is to get past the end of the array, so any space past the last one is safe.
+<p>
+</div>
+
+<div style="width:900px; margin-left:auto; margin-right:auto; margin-top:30px">
+<h2>Solution:</h2>
+<div>Array input</div>
+<input style="width:800px; font-size:20px;" type="text" id="textInput" value="[true, false, true, true, false, true, true, true]" />&nbsp;<button id="textButton">Run Solution</button>
+<h3>Best Solutions:</h3>
+<div id="solution">
+	click "Run Solution"
+</div>
+</div>
+
+
+<script type="text/javascript">
+
+	function FrogTest(padsArray){
+		var id=0
+		var node=function(velocity,v1, v0, vn, success){
+			this.v1=v1
+			this.v0=v0
+			this.vn=vn
+			this.velocity=velocity
+			this.success=success
+			this.id =id++
+		}
+
+		
+
+		var createNode=function(padIndex,previousIndex){
+			var velocity=padIndex-previousIndex
+			if(velocity==0){
+				return false
+			}else if(padIndex>=padsArray.length){
+				return new node(velocity,false,false,false,true)
+			}else if(padsArray[padIndex]){
+				
+				var v1Node=createNode(padIndex+velocity+1, padIndex )
+				var v0Node= vnNode =false
+				
+				v0Node=createNode(padIndex+velocity, padIndex )
+				vnNode=createNode(padIndex+velocity-1, padIndex )
+
+				return new node(velocity,v1Node,v0Node,vnNode,false)
+				
+			}else{
+				return false
+			}
+		}
+
+		var setParents=function(node){
+			if(!node){
+				return false
+			}
+			var keys=['v1','v0','vn']
+			for(var i in keys){
+				var key = keys[i]
+				if(node[key]){
+					node[key].parent=node
+					setParents(node[key])
+				}
+			}
+			node.v1.parent=node
+		}
+
+		var createTree=function(){
+			var rootNode=createNode(0,-1)
+			setParents(rootNode)
+			return rootNode
+		}
+
+		var createSolutionArray=function(node,solution){
+			var solution=(solution)?solution:[]
+			solution.push(node.velocity)
+			if(node.parent){
+				return createSolutionArray(node.parent,solution)
+			}else{
+				return solution.reverse()
+			}
+		}
+
+		var findPaths=function(node,vArray,solutions){
+			vArray=vArray?vArray:[]
+			solutions=solutions?solutions:{}
+			vArray.push(node.velocity)
+			
+			if(!node.v1 && !node.v0 && !node.vn && !node.success){
+				return false
+			}
+			
+			if(node.success){
+				var solution=createSolutionArray(node)
+				var key = solution.toString()
+				solutions[key]=  solution;
+				
+			}
+			var keys=['v1','v0','vn']
+			for(var i in keys){
+				var key = keys[i]
+				if(node[key]){
+				
+				      findPaths(node[key],vArray,solutions)
+				}
+			}
+			return solutions
+		}
+
+		var findBestSolutions=function(solutions,maxSize){
+			var maxSize=(maxSize)?maxSize:Infinity
+			for(var i in solutions){
+				var solution=solutions[i]
+				size=solution.length
+				if(size<maxSize){
+					findBestSolutions(solutions,size)
+				}
+				if(size>maxSize){
+					delete solutions[i]
+				}
+			}
+			return solutions
+		}
+
+		
+		//console.log(bestSolutions)
+		this.runSolution=function(){
+			var rootNode=createTree()
+			var paths=findPaths(rootNode)
+			var bestSolutions =findBestSolutions(paths) 
+			return bestSolutions
+		}
+
+		this.printSolution=function(el,solutions){
+			if( Object.keys(solutions).length==0 || solutions==false){
+				$(el).html('No Solutions')
+			}else{
+				$(el).html('')
+			}
+			//console.log(solutions)
+			for(var i in solutions){
+				var div =$(el).append('<div>'+solutions[i].join(',')+'</div>')
+				
+				
+			}
+				
+		}
+		
+	}
+
+
+	$('#textButton').click(function(){
+		var array= eval($('#textInput').val())
+		//console.log(array);
+		
+		var frogTest= new FrogTest(array)
+		var solutions= frogTest.runSolution()
+
+		frogTest.printSolution($('#solution'),solutions)
+	
+	})
+
+	
+
+</script>
+
+</body>
+</html>
